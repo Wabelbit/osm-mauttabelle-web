@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>OSM Mauttabelle</title>
+
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- leaflet (map viewer) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- zip-js -->
+    <script src="js/external/zip.min.js" integrity="sha256-uzdyDTe1tSOlO/3los7GiT7/h386+WUraYryV5BZC/I="></script>
+</head>
+<body>
+
+<div class="container-fluid vh-100 d-flex flex-column">
+    <!-- map -->
+    <div class="row flex-fill flex-grow-1">
+        <div id="map"></div>
+    </div>
+
+    <!-- mauttabelle selection -->
+    <div class="row mt-3">
+        <div class="col">
+            Version der Mauttabelle wählen:
+            <select id="mauttabelle-select" class="form-select" onchange="check_custom()">
+                <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2025_01_01.zip?__blob=publicationFile&v=2" selected>1. Januar 2025</option>
+                <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_11_17.zip?__blob=publicationFile&v=2">17. November 2024 bis 31. Dezember 2024</option>
+                <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_10_01.zip?__blob=publicationFile&v=2">1. Oktober 2024 bis 16. November 2024</option>
+                <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_09_01.zip?__blob=publicationFile&v=2">1. September bis 30. September 2024</option>
+                <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_07_01.zip?__blob=publicationFile&v=2">1. Juli 2024 bis 31. August 2024</option>
+                <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_05_19.zip?__blob=publicationFile&v=2">19. Mai bis 30. Juni 2024</option>
+                <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_04_01.zip?__blob=publicationFile&v=2">1. April 2024 bis 18. Mai 2024</option>
+                <option value="custom">Link selbst eingeben...</option>
+            </select>
+            <input id="custom-link" type="text" class="form-control" placeholder="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/..." hidden>
+            <script>
+                function check_custom() {
+                    const currentValue = document.getElementById("mauttabelle-select").value;
+                    console.log(currentValue);
+                    document.getElementById("custom-link").hidden = !(currentValue === "custom");
+                }
+            </script>
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Mauttabelle laden</button>
+        </div>
+
+        <div class="col">
+            <span id="lastClick"></span><br/>
+            <span id="currentPos"></span>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    const map = L.map('map').setView([51.36790067820006, 10.645751953125], 7);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+    }).addTo(map);
+
+    function onMapClick(e) {
+        document.getElementById('lastClick').innerText = e.latlng;
+    }
+    function onMapMove(e) {
+        const pos = map.getCenter();
+        const zoom = map.getZoom();
+        document.getElementById('currentPos').innerText = `(${pos.lat}, ${pos.lng}) @ ${zoom}`;
+        console.log(e);
+    }
+    map.on('click', onMapClick);
+    map.on('moveend', onMapMove);
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>
