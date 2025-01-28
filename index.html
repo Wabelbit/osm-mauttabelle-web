@@ -15,6 +15,8 @@
 
     <!-- zip-js -->
     <script src="js/external/zip.min.js" integrity="sha256-uzdyDTe1tSOlO/3los7GiT7/h386+WUraYryV5BZC/I="></script>
+
+    <script src="js/main.js"></script>
 </head>
 <body>
 
@@ -25,26 +27,12 @@
     </div>
 
     <!-- mauttabelle selection -->
-    <div class="row mt-3 mb-2 mx-lg-5 px-xxl-5">
+    <div class="row m-2">
         <div class="col">
-            <form>
-                <div class="mb-1">
-                    <label for="mauttabelle-select" class="form-label">Version der Mauttabelle wählen:</label>
-                    <select id="mauttabelle-select" class="form-select" onchange="check_custom()">
-                        <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2025_01_01.zip?__blob=publicationFile&v=2" selected>1. Januar 2025</option>
-                        <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_11_17.zip?__blob=publicationFile&v=2">17. November 2024 bis 31. Dezember 2024</option>
-                        <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_10_01.zip?__blob=publicationFile&v=2">1. Oktober 2024 bis 16. November 2024</option>
-                        <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_09_01.zip?__blob=publicationFile&v=2">1. September bis 30. September 2024</option>
-                        <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_07_01.zip?__blob=publicationFile&v=2">1. Juli 2024 bis 31. August 2024</option>
-                        <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_05_19.zip?__blob=publicationFile&v=2">19. Mai bis 30. Juni 2024</option>
-                        <option value="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/Mauttabelle_2024_04_01.zip?__blob=publicationFile&v=2">1. April 2024 bis 18. Mai 2024</option>
-                        <option value="custom">Link selbst eingeben...</option>
-                    </select>
-                </div>
-                <div class="mb-1">
-                    <input id="custom-link" type="text" class="form-control" placeholder="https://www.balm.bund.de/SharedDocs/Downloads/DE/Lkw-Maut/Mauttabelle/..." hidden>
-                </div>
-                <button type="submit" class="btn btn-primary">Mauttabelle laden</button>
+            <form onsubmit="return false;">
+                <label for="mauttabelle-select" class="form-label">Version der Mauttabelle wählen (ZIP Download von <a href="https://mauttabelle.de" target="_blank">https://mauttabelle.de</a>):</label>
+                <input id="mauttabelle-select" type="file" accept="application/zip" onchange="on_submit();">
+                <span id="error-message" style="color: red;"></span>
             </form>
 
             <script>
@@ -52,6 +40,18 @@
                     const currentValue = document.getElementById("mauttabelle-select").value;
                     console.log(currentValue);
                     document.getElementById("custom-link").hidden = !(currentValue === "custom");
+                }
+
+                const on_submit = async function () {
+                    const selected = document.getElementById("mauttabelle-select").files[0];
+                    const errorElem = document.getElementById("error-message");
+                    errorElem.innerText = "";
+
+                    console.log("Loading", selected);
+                    const result = await loadMauttabelle(selected);
+                    if (result) {
+                        errorElem.innerText = "Datei kann nicht geladen werden: " + result;
+                    }
                 }
             </script>
         </div>
@@ -85,6 +85,9 @@
     }
     map.on('click', onMapClick);
     map.on('moveend', onMapMove);
+
+
+    window.show
 </script>
 
 
