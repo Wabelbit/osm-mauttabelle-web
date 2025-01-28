@@ -1,5 +1,13 @@
+"use strict";
+
+let xxx
 const loadMauttabelle = async function (file) {
-    const excelData = await unzipFile(file)
+    const excelData = await unzipFile(file);
+    const workbook = XLSX.read(await excelData.arrayBuffer());
+    console.log("workbook", workbook);
+
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    // TODO: massage the data to make it usable
 }
 
 const unzipFile = async function (file) {
