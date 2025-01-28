@@ -33,6 +33,7 @@
                 <label for="mauttabelle-select" class="form-label">Version der Mauttabelle wählen (ZIP Download von <a href="https://mauttabelle.de" target="_blank">https://mauttabelle.de</a>):</label>
                 <input id="mauttabelle-select" type="file" accept="application/zip" onchange="on_submit();">
                 <span id="error-message" style="color: red;"></span>
+                <span id="unzip-progress" style="color: green;"></span>
             </form>
 
             <script>
@@ -48,9 +49,10 @@
                     errorElem.innerText = "";
 
                     console.log("Loading", selected);
-                    const result = await loadMauttabelle(selected);
-                    if (result) {
-                        errorElem.innerText = "Datei kann nicht geladen werden: " + result;
+                    try {
+                        await loadMauttabelle(selected);
+                    } catch (error) {
+                        errorElem.innerText = "Datei konnte nicht geladen werden: " + error;
                     }
                 }
             </script>
